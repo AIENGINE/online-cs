@@ -43,7 +43,7 @@ export function Opening() {
                 <span>3.</span>
                 <span>Fork ticket resolution ChatBot for travel bags section Pipe on ⌘ Langbase</span>
               </Dlink>
-              <Dlink href="https://github.com/LangbaseInc/langbase-examples/tree/main/examples/online-store-customer-support">
+              <Dlink href="https://github.com/LangbaseInc/langbase-examples/tree/main/examples/online-store-customer-service">
                 <span>4.</span>
                 <span>Use LangUI.dev's open source code components</span>
               </Dlink>
