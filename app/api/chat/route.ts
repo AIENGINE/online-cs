@@ -17,7 +17,6 @@ export const runtime = 'edge'
 //     }
 
 //     const endpointUrl = 'https://api.langbase.com/beta/chat'
-  
 
 //     const headers = {
 //       'Content-Type': 'application/json',
@@ -57,39 +56,61 @@ export const runtime = 'edge'
 //   }
 // }
 
+// export async function POST(req: Request) {
+//   try {
+//     const body = await req.json();
+//     const { messages } = body;
+
+//     const response = await fetch('http://localhost:8787', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ messages: messages }),
+//     });
+
+//     const data = await response.text();
+//     let jsonData;
+//     try {
+//       jsonData = JSON.parse(data);
+//       if (jsonData.content) {
+//         jsonData.content = jsonData.content.replace(/^{|}$/g, '').replace(/"/g, '');
+//       }
+//     } catch (parseError) {
+//       jsonData = { content: data };
+//     }
+
+//     return new Response(JSON.stringify(jsonData), {
+//       headers: { 'Content-Type': 'application/json' },
+//     });
+//   } catch (error: any) {
+//     console.error('Uncaught API Error:', error);
+//     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+//   }
+// }
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { messages } = body;
+    const body = await req.json()
+    const { messages } = body
 
     const response = await fetch('http://localhost:8787', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ messages: messages }),
-    });
+      body: JSON.stringify({ messages: messages })
+    })
 
-    const data = await response.text();
-    let jsonData;
-    try {
-      jsonData = JSON.parse(data);
-      if (jsonData.content) {
-        jsonData.content = jsonData.content.replace(/^{|}$/g, '').replace(/"/g, '');
-      }
-    } catch (parseError) {
-      jsonData = { content: data };
-    }
+    // Create a stream from the response
+    const stream = OpenAIStream(response)
 
-    return new Response(JSON.stringify(jsonData), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // Return a streaming response
+    return new StreamingTextResponse(stream)
   } catch (error: any) {
-    console.error('Uncaught API Error:', error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error('Uncaught API Error:', error)
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500
+    })
   }
 }
-
-
-
-
