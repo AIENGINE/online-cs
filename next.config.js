@@ -22,7 +22,7 @@ module.exports = {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxSize: 200000, // 200 KB
+        maxSize: 100000, // 200 KB
       };
     }
     return config;
