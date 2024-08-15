@@ -18,6 +18,9 @@ module.exports = {
   compress: true,
   swcMinify: true,
   output: 'standalone',
+  experimental: {
+    serverComponentsExternalPackages: ['@vercel/og', 'canvas'],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks = {
@@ -27,6 +30,7 @@ module.exports = {
         maxSize: 24 * 1024 * 1024, // 24 MiB
       };
     }
+    config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
 }
