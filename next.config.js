@@ -12,25 +12,16 @@ module.exports = {
   },
   env: {
     BACKEND_URL: process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8787'
-      : 'https://summer-flower-b680.engalidanish.workers.dev/',
-  },
-  compress: true,
-  swcMinify: true,
-  output: 'standalone',
-  experimental: {
-    serverComponentsExternalPackages: ['@vercel/og', 'canvas'],
+      ? 'http://localhost:8787' // Local Cloudflare Worker URL
+      : 'https://summer-flower-b680.engalidanish.workers.dev/', // Deployed Cloudflare Worker URL
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxInitialRequests: 25,
-        minSize: 20000,
-        maxSize: 24 * 1024 * 1024, // 24 MiB
+        maxSize: 250000, // 250 KB
       };
     }
-    config.experiments = { ...config.experiments, topLevelAwait: true };
     return config;
   },
-}
+};
