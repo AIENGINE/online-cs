@@ -1,9 +1,5 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
-
-const nextConfig = {
+module.exports = {
   images: {
     remotePatterns: [
       {
@@ -20,35 +16,21 @@ const nextConfig = {
       ? 'http://localhost:8787'
       : 'https://summer-flower-b680.engalidanish.workers.dev/',
   },
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      config.cache = false;
-    }
+  webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxInitialRequests: 25,
-        minSize: 20000,
-        maxSize: 60000,
+        maxInitialRequests: 30,
+        minSize: 10000,
+        maxSize: 25000,
       };
     }
-    config.optimization.minimize = true;
+    config.externals = [...config.externals, 'canvas', 'jsdom'];
     return config;
   },
   swcMinify: true,
   productionBrowserSourceMaps: false,
   experimental: {
-    modularizeImports: {
-      '@material-ui/core/': {
-        transform: '@material-ui/core/{{ member }}',
-      },
-      '@material-ui/icons/': {
-        transform: '@material-ui/icons/{{ member }}',
-      },
-    },
+    optimizeCss: true,
   },
-  compress: true,
-  poweredByHeader: false,
 };
-
-module.exports = withBundleAnalyzer(nextConfig);
