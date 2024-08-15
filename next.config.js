@@ -1,15 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-        port: '',
-        pathname: '**'
-      }
-    ]
-  },
   env: {
     BACKEND_URL: process.env.NODE_ENV === 'development'
       ? 'http://localhost:8787'
@@ -22,20 +12,30 @@ module.exports = {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxSize: 100000, // 100 KB
+        maxSize: 50000, // 50 KB
       };
     }
-    // Minimize all JavaScript output of chunks
     config.optimization.minimize = true;
-    // Perform code splitting
     config.optimization.splitChunks.chunks = 'all';
+    // Remove moment.js locales
+    config.plugins.push(new webpack.IgnorePlugin({
+      resourceRegExp: /^\.\/locale$/,
+      contextRegExp: /moment$/,
+    }));
     return config;
   },
-  // Enable production mode
   productionBrowserSourceMaps: false,
   swcMinify: true,
-  // Disable image optimization
   images: {
     unoptimized: true,
   },
+  // Disable unnecessary features
+  reactStrictMode: false,
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@mui/material', '@mui/icons-material'],
+  },
+  // Compress HTML and inline CSS
+  compress: true,
+  poweredByHeader: false,
 };
