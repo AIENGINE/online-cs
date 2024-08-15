@@ -94,7 +94,9 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { messages, threadId } = body
 
-    const response = await fetch('http://localhost:8787', {
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:8787';
+
+    const response = await fetch(`${backendUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
