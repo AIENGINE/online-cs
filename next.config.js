@@ -1,5 +1,9 @@
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -20,9 +24,9 @@ module.exports = {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxInitialRequests: 30,
-        minSize: 10000,
-        maxSize: 25000,
+        maxInitialRequests: 50,
+        minSize: 5000,
+        maxSize: 20000,
       };
     }
     config.externals = [...config.externals, 'canvas', 'jsdom'];
@@ -32,5 +36,17 @@ module.exports = {
   productionBrowserSourceMaps: false,
   experimental: {
     optimizeCss: true,
+    modularizeImports: {
+      '@material-ui/core/': {
+        transform: '@material-ui/core/{{ member }}',
+      },
+      '@material-ui/icons/': {
+        transform: '@material-ui/icons/{{ member }}',
+      },
+    },
   },
+  compress: true,
+  poweredByHeader: false,
 };
+
+module.exports = withBundleAnalyzer(nextConfig);
