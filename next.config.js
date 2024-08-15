@@ -12,8 +12,8 @@ module.exports = {
   },
   env: {
     BACKEND_URL: process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8787' // Local Cloudflare Worker URL
-      : 'https://summer-flower-b680.engalidanish.workers.dev/', // Deployed Cloudflare Worker URL
+      ? 'http://localhost:8787'
+      : 'https://summer-flower-b680.engalidanish.workers.dev/',
   },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
@@ -22,9 +22,20 @@ module.exports = {
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
-        maxSize: 100000, // 200 KB
+        maxSize: 100000, // 100 KB
       };
     }
+    // Minimize all JavaScript output of chunks
+    config.optimization.minimize = true;
+    // Perform code splitting
+    config.optimization.splitChunks.chunks = 'all';
     return config;
+  },
+  // Enable production mode
+  productionBrowserSourceMaps: false,
+  swcMinify: true,
+  // Disable image optimization
+  images: {
+    unoptimized: true,
   },
 };
