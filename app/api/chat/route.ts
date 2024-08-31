@@ -9,7 +9,7 @@ export const runtime = 'edge'
  * @returns
  */
 
-const decoder = new TextDecoder();
+// const decoder = new TextDecoder();
 export async function POST(req: Request) {
   try {
     const body = await req.json()
@@ -17,11 +17,11 @@ export async function POST(req: Request) {
     console.log('Request body:', JSON.stringify(body, null, 2))
 
     // Append the route object to the request body
-    const modifiedBody = {
-      ...body,
-      route: "frontend"
-    }
-    console.log('Modified request body:', JSON.stringify(modifiedBody, null, 2))
+    // const modifiedBody = {
+    //   ...body,
+    //   route: "frontend"
+    // }
+    // console.log('Modified request body:', JSON.stringify(modifiedBody, null, 2))
 
     const backendUrl = process.env.BACKEND_URL || 'http://localhost:8787';
 
@@ -34,22 +34,38 @@ export async function POST(req: Request) {
       body: JSON.stringify({ messages: messages })
     })
 
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      const status = response.status;
+      const errorResponse = {
+        error: status === 429 ? 'Rate limit exceeded' : 'Backend request failed',
+        details: errorMessage,
+        status: status
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: status,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
     // Create a transform stream to log and decode response chunks
-    const logStream = new TransformStream({
-      transform(chunk, controller) {
-        const decodedChunk = decoder.decode(chunk);
-        console.log('Decoded response chunk:', decodedChunk);
-        controller.enqueue(chunk)
-      }
-    })
+    // const logStream = new TransformStream({
+    //   transform(chunk, controller) {
+    //     const decodedChunk = decoder.decode(chunk);
+    //     console.log('Decoded response chunk:', decodedChunk);
+    //     controller.enqueue(chunk)
+    //   }
+    // })
 
     // Pipe the response through the log stream
-    const loggedResponse = response.body?.pipeThrough(logStream)
+    // const loggedResponse = response.body?.pipeThrough(logStream)
 
     // Create a stream from the logged response
-    const stream = OpenAIStream(new Response(loggedResponse, response))
+    // const stream = OpenAIStream(new Response(loggedResponse, response))
     
-    // const stream = OpenAIStream(response)
+    const stream = OpenAIStream(response)
     // Return a streaming response
     return new StreamingTextResponse(stream, {
       headers: {
