@@ -68,7 +68,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
       3,
       true
     )}${fileExtension}`
-    const fileName = window.prompt('Enter file name' || '', suggestedFileName)
+    const fileName = window.prompt('Enter file name', suggestedFileName)
 
     if (!fileName) {
       // User pressed cancel on prompt.
@@ -86,7 +86,6 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
   }
-
   const onCopy = () => {
     if (isCopied) return
     copyToClipboard(value)
